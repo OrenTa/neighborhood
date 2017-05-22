@@ -1,82 +1,29 @@
 "use strict";
 
-//model
-var Model = function () {
-   
-    this.locations = [];
-    this.locations.push({name:"Phraya Phet Prani",
-                         loc:{lat:13.75445,lng:100.505351},
-                         show:ko.observable(true)});
-    this.locations.push({name:"The Giant Swing",
-                         loc:{lat:13.752040,lng:100.499600},
-                         show:ko.observable(true)});
-    this.locations.push({name:"Soi Sukha 2",
-                         loc:{lat:13.750122,lng:100.499171},
-                         show:ko.observable(true)});
-    this.locations.push({name:"Wat Thep Sirin Thrawat",
-                         loc:{lat:13.746287,lng:100.509814},
-                         show:ko.observable(true)});
-    this.locations.push({name:"Bobe Market Bridge",
-                         loc:{lat:13.753040,lng:100.518741},
-                         show:ko.observable(true)});
-    this.locations.push({name:"Dragon Temple",
-                         loc:{lat:13.7436,lng:100.511874},
-                         show:ko.observable(true)});
-   
-};
+//model - holds the data 
+var locations = [
+    {name:"Phraya Phet Prani", loc:{lat:13.75445,lng:100.505351},               show:ko.observable(true)},
+    {name:"The Giant Swing", loc:{lat:13.752040,lng:100.499600},
+    show:ko.observable(true)},
+    {name:"Soi Sukha 2", loc:{lat:13.750122,lng:100.499171},
+    show:ko.observable(true)},
+    {name:"Wat Thep Sirin Thrawat",loc:{lat:13.746287,lng:100.509814},
+    show:ko.observable(true)},
+    {name:"Bobe Market Bridge",loc:{lat:13.753040,lng:100.518741},
+    show:ko.observable(true)},
+    {name:"Dragon Temple",loc:{lat:13.7436,lng:100.511874},
+    show:ko.observable(true)}   
+];
 
-var MyPlaces = (new Model()).locations;
 var temptxt; //used for the search term
 var i;
 var map; //holds the map object
-
-
-//ko viewModel
-var ViewModel = function () {
-    //var y = MyPlaces;
-    this.places = ko.observableArray(MyPlaces);
-    this.searchTerm = ko.observable("");//this is the searchTerm
-    
-    this.listFilter = function() {
-        //console.clear();
-        temptxt = this.searchTerm();
-        
-        //this.filteredPlaces.removeAll();
-        for (i in MyPlaces) {
-            //console.log(this.places()[i].name);
-            if (MyPlaces[i].name.toLowerCase().includes(temptxt.toLowerCase())){
-                this.places()[i].show(true);
-            }
-            else {
-                this.places()[i].show(false);
-            }
-            
-            }
-        
-    }//end of filterfunction.
-    
-    this.listFilter(); //run this one time on initialization.
-}
-    
-
-    
-ko.applyBindings(new ViewModel());
-
-// this function is called on 'mobile view' by clicking the hamburger
-// the binding is done with knockout in the HTML itself
-function showNav() {
-    if (document.getElementById('locations').style.width === '0px') {
-        document.getElementById('locations').style.width = '250px';
-    }
-        else {
-    	    document.getElementById('locations').style.width = '0px';
-        }
-}
-
+var places;
 //inits the map and the markers
 
 var loc;
 loc = {lat:13.750,lng:100.503};
+
 var marker;
 var markers = [];
 var infowindow;
@@ -94,14 +41,14 @@ function initMap() {
     var markercopy;
     
     // adds markers and infowindows based on the data in the model
-    for (i in MyPlaces){
+    for (i in places()){
         marker = new google.maps.Marker({
-        position: MyPlaces[i].loc,
+        position: places()[i].loc,
         map: map,
-        title: MyPlaces[i].name
+        title: places()[i].name
         });
         infowindow = new google.maps.InfoWindow({
-            content: '' + MyPlaces[i].name + '-' +
+            content: '' + places()[i].name + '-' +
             "<img src='https://www.w3schools.com/html/pic_mountain.jpg' style='width:100px'>",
             maxWidth: '200'
         });    
@@ -122,6 +69,53 @@ function initMap() {
     
 }
 
+
+//ko viewModel
+var ViewModel = function () {
+    places = ko.observableArray(locations);
+    this.searchTerm = ko.observable("");//this is the searchTerm
+    
+    this.listFilter = function() {
+        //console.clear();
+        temptxt = this.searchTerm();
+        
+        //this.filteredPlaces.removeAll();
+        for (i in places()) {
+            //console.log(this.places()[i].name);
+            if (places()[i].name.toLowerCase().includes(temptxt.toLowerCase())){
+                places()[i].show(true);
+            }
+            else {
+                places()[i].show(false);
+            }
+            
+            }
+        updateMap();
+    }//end of filterfunction.
+    
+    this.listFilter(); //run this one time on initialization.
+}
+    
+
+    
+ko.applyBindings(new ViewModel());
+
+// this function is called on 'mobile view' by clicking the hamburger
+// the binding is done with knockout in the HTML itself
+function showNav() {
+    if (document.getElementById('locations').style.width === '0px') {
+        document.getElementById('locations').style.width = '250px';
+    }
+        else {
+    	    document.getElementById('locations').style.width = '0px';
+        }
+}
+
+
+
 function updateMap() {
-    marker.setVisible(false);
+    //marker.setVisible(false);
+    for (i in markers) {
+        markers[i].setVisible(places()[i].show());
+    }
 }
