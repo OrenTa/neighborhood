@@ -1,7 +1,4 @@
 <!-- 
-Read here about HTML Templates https://www.html5rocks.com/en/tutorials/webcomponents/template/ 
-use this to create a dynamic building of the list in the view - do it in a function in the viewmodel
-
 split the code to model and viewmodel
 
 read instructions 
@@ -44,8 +41,10 @@ wait - there's the general list and there's a list to show which is a filtered f
                         <input id="search_text" type="text" name="search_text" data-bind='textInput:searchTerm, valueUpdate: "afterkeyup", event:{input: listFilter}'>
                         <button id="search_button" type="button">search</button>
                     </div>
-	            	<div class="locations" data-bind="foreach: filteredPlaces">
-                        <div class="location" data-bind="text: $data.name"> </div>
+	            	<div class="locations" data-bind="foreach: places">
+                        <div class="location" data-bind="if: $data.show"> 
+                        <span data-bind="text: $data.name"></span>
+                        </div>
                     </div>
 	           </div>
 	            <div class="map" id="map"> The map will be here </div>

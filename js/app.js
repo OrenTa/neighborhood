@@ -4,12 +4,24 @@
 var Model = function () {
    
     this.locations = [];
-    this.locations.push({name:"Phraya Phet Prani",loc:{lat:13.75445,lng:100.505351}});
-    this.locations.push({name:"The Giant Swing",loc:{lat:13.752040,lng:100.499600}});
-    this.locations.push({name:"Soi Sukha 2",loc:{lat:13.750122,lng:100.499171}});
-    this.locations.push({name:"Wat Thep Sirin Thrawat",loc:{lat:13.746287,lng:100.509814}});
-    this.locations.push({name:"Bobe Market Bridge",loc:{lat:13.753040,lng:100.518741}});
-    this.locations.push({name:"Dragon Temple",loc:{lat:13.7436,lng:100.511874}});
+    this.locations.push({name:"Phraya Phet Prani",
+                         loc:{lat:13.75445,lng:100.505351},
+                         show:ko.observable(true)});
+    this.locations.push({name:"The Giant Swing",
+                         loc:{lat:13.752040,lng:100.499600},
+                         show:ko.observable(true)});
+    this.locations.push({name:"Soi Sukha 2",
+                         loc:{lat:13.750122,lng:100.499171},
+                         show:ko.observable(true)});
+    this.locations.push({name:"Wat Thep Sirin Thrawat",
+                         loc:{lat:13.746287,lng:100.509814},
+                         show:ko.observable(true)});
+    this.locations.push({name:"Bobe Market Bridge",
+                         loc:{lat:13.753040,lng:100.518741},
+                         show:ko.observable(true)});
+    this.locations.push({name:"Dragon Temple",
+                         loc:{lat:13.7436,lng:100.511874},
+                         show:ko.observable(true)});
    
 };
 
@@ -21,36 +33,29 @@ var map; //holds the map object
 
 //ko viewModel
 var ViewModel = function () {
-    var y = MyPlaces;
-    var tempfilter;
-    
-    this.places = ko.observableArray(y);
-    this.filteredPlaces = ko.observableArray();
+    //var y = MyPlaces;
+    this.places = ko.observableArray(MyPlaces);
     this.searchTerm = ko.observable("");//this is the searchTerm
     
-    //this.searchhelper =function (loc,tst) {
-    //    return loc.includes(tst);
-    //}
-    
-    
     this.listFilter = function() {
-        console.clear();
+        //console.clear();
         temptxt = this.searchTerm();
-        tempfilter = this.places().filter( function(el){
-            return el.name.toLowerCase().includes(temptxt.toLowerCase());  
-        });
-        // console.log('--search term is --' + temptxt);
-        // console.log('--found:' + tempfilter.length + ' items');
-        this.filteredPlaces.removeAll();
-        for (i in tempfilter) {
-            console.log(tempfilter[i].name);
-            this.filteredPlaces.push(tempfilter[i]);
+        
+        //this.filteredPlaces.removeAll();
+        for (i in MyPlaces) {
+            //console.log(this.places()[i].name);
+            if (MyPlaces[i].name.toLowerCase().includes(temptxt.toLowerCase())){
+                this.places()[i].show(true);
+            }
+            else {
+                this.places()[i].show(false);
+            }
+            
             }
         
-        //updateMap(this.filteredPlaces);
-    }
+    }//end of filterfunction.
     
-    this.listFilter();
+    this.listFilter(); //run this one time on initialization.
 }
     
 
