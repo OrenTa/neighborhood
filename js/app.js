@@ -2,17 +2,18 @@
 
 //model - holds the data 
 var locations = [
-    {name:"Phraya Phet Prani", loc:{lat:13.75445,lng:100.505351},               show:ko.observable(true)},
+    {name:"Phraya Phet Prani", loc:{lat:13.75445,lng:100.505351}, 
+    show:ko.observable(true), id:"l1"},
     {name:"The Giant Swing", loc:{lat:13.752040,lng:100.499600},
-    show:ko.observable(true)},
+    show:ko.observable(true), id:"l2"},
     {name:"Soi Sukha 2", loc:{lat:13.750122,lng:100.499171},
-    show:ko.observable(true)},
+    show:ko.observable(true), id:"l3"},
     {name:"Wat Thep Sirin Thrawat",loc:{lat:13.746287,lng:100.509814},
-    show:ko.observable(true)},
+    show:ko.observable(true), id:"l4"},
     {name:"Bobe Market Bridge",loc:{lat:13.753040,lng:100.518741},
-    show:ko.observable(true)},
+    show:ko.observable(true), id:"l5"},
     {name:"Dragon Temple",loc:{lat:13.7436,lng:100.511874},
-    show:ko.observable(true)}   
+    show:ko.observable(true), id:"l6"}   
 ];
 
 var temptxt; //used for the search term
@@ -56,7 +57,10 @@ function initMap() {
         
         // this function is built in a way to deal with function closure
         // as explained in the course
-        marker.addListener('click',(function(markercopy, infocopy) {
+        
+        marker.addListener('click', infoShow(marker,infowindow));
+        
+        function infoShow (markercopy, infocopy) {
             return function() {
                 infocopy.open(map, markercopy);
                 markercopy.setAnimation(google.maps.Animation.BOUNCE);
@@ -64,9 +68,27 @@ function initMap() {
                     markercopy.setAnimation(null);
                 }, 1200);
             };
-        })(marker, infowindow));
+        }
+        
     }
     
+}
+
+// jquery
+// used to attach event listeners to the list for clicking
+$(document).ready(function(){
+    
+    $("#locationslist").children("div").each(function () {
+       $(this).click(function(){
+        console.log($(this).attr('id'));
+    });
+    });
+    
+   
+});
+
+function showinfo(event) {
+    console.log(this.target);
 }
 
 
