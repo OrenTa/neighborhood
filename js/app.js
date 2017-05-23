@@ -3,17 +3,17 @@
 //model - holds the data 
 var locations = [
     {name:"Phraya Phet Prani", loc:{lat:13.75445,lng:100.505351}, 
-    show:ko.observable(true), id:"l1"},
+    show:ko.observable(true), id:"0"},
     {name:"The Giant Swing", loc:{lat:13.752040,lng:100.499600},
-    show:ko.observable(true), id:"l2"},
+    show:ko.observable(true), id:"1"},
     {name:"Soi Sukha 2", loc:{lat:13.750122,lng:100.499171},
-    show:ko.observable(true), id:"l3"},
+    show:ko.observable(true), id:"2"},
     {name:"Wat Thep Sirin Thrawat",loc:{lat:13.746287,lng:100.509814},
-    show:ko.observable(true), id:"l4"},
+    show:ko.observable(true), id:"3"},
     {name:"Bobe Market Bridge",loc:{lat:13.753040,lng:100.518741},
-    show:ko.observable(true), id:"l5"},
+    show:ko.observable(true), id:"4"},
     {name:"Dragon Temple",loc:{lat:13.7436,lng:100.511874},
-    show:ko.observable(true), id:"l6"}   
+    show:ko.observable(true), id:"5"}   
 ];
 
 var temptxt; //used for the search term
@@ -28,7 +28,7 @@ loc = {lat:13.750,lng:100.503};
 var marker;
 var markers = [];
 var infowindow;
-var infos = [];
+var infowindows = [];
 
 function initMap() {
 
@@ -54,9 +54,7 @@ function initMap() {
             maxWidth: '200'
         });    
         markers.push(marker);
-        
-        // this function is built in a way to deal with function closure
-        // as explained in the course
+        infowindows.push(infowindow);
         
         marker.addListener('click', infoShow(marker,infowindow));
         
@@ -78,18 +76,18 @@ function initMap() {
 // used to attach event listeners to the list for clicking
 $(document).ready(function(){
     
-    $("#locationslist").children("div").each(function () {
+    $("#locationslist").children("div").each(function() {
        $(this).click(function(){
-        console.log($(this).attr('id'));
+        for (i in infowindows) {
+          infowindows[i].close();  
+        }
+        infowindows[parseInt($(this).attr('id'))].open(map, markers[parseInt($(this).attr('id'))]);
+        $(this).parent().find("div").css("background-color","white");
+        $(this).css("background-color","orange");
+       })
     });
-    });
-    
-   
+       
 });
-
-function showinfo(event) {
-    console.log(this.target);
-}
 
 
 //ko viewModel
