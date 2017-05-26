@@ -2,12 +2,10 @@
 
 //model - holds the data 
 var locations = [
-    {name:"Giant Swing", loc:{lat:13.752040,lng:100.499600},
+    {name:"Wat Ratchabophit", loc:{lat:13.750122,lng:100.499171},
     show:ko.observable(true), id:"0",wikiurl:ko.observable('')},
-    {name:"Wat Ratchabopit SathitMahasimaram", loc:{lat:13.750122,lng:100.499171},
-    show:ko.observable(true), id:"1",wikiurl:ko.observable('')},
     {name:"Giant Swing", loc:{lat:13.752040,lng:100.499600},
-    show:ko.observable(true), id:"2",wikiurl:ko.observable('')} /*,
+    show:ko.observable(true), id:"1",wikiurl:ko.observable('')},
     {name:"Wat Thep Sirin Thrawat",loc:{lat:13.746287,lng:100.509814},
     show:ko.observable(true), id:"2",wikiurl:ko.observable('')},
     {name:"Bobe Market Bridge",loc:{lat:13.753040,lng:100.518741},
@@ -15,13 +13,9 @@ var locations = [
     {name:"Wat Mangkon Kamalawat",loc:{lat:13.7436,lng:100.511874},
     show:ko.observable(true), id:"4",wikiurl:ko.observable('')},
     {name:"Wat Bowonniwet Vihara", loc:{lat:13.75445,lng:100.505351}, 
-    show:ko.observable(true), id:"5",wikiurl:ko.observable('')},
+    show:ko.observable(true), id:"5",wikiurl:ko.observable('')}, 
     {name:"Wat saket",loc:{lat:13.760294,lng:100.499861},
-    show:ko.observable(true), id:"6",wikiurl:ko.observable('')},
-    {name:"Wat saket",loc:{lat:13.760294,lng:100.499861},
-    show:ko.observable(true), id:"7",wikiurl:ko.observable('')},
-    {name:"Wat saket",loc:{lat:13.760294,lng:100.499861},
-    show:ko.observable(true), id:"8",wikiurl:ko.observable('')} */
+    show:ko.observable(true), id:"6",wikiurl:ko.observable('')}
 ];
 
 var temptxt; //used for the search term
@@ -36,12 +30,9 @@ var imageurls=[];
 //inits the map and the markers
 
 var url;
-var surl;
 var surlz;
 var markup;
 var y;
-var temp;
-var namewithunderscore;
 var problem_image = 'https://fearmastery.files.wordpress.com/2013/07/problems-3.jpg';
 
 var loc;
@@ -49,61 +40,64 @@ loc = {lat:13.750,lng:100.503};
 
 
 function getwikiurls() {
+    var temp;
+    var namewithunderscore;
+    var surl;
     
     locations.forEach(function(element){
-    //this one is used to return the list of wiki images for each location
-    namewithunderscore = element.name.split(' ').join('_');
-    surl = 'http://en.wikipedia.org/w/api.php?action=' +
+        
+        //this one is used to return the list of wiki images for each location
+        element.imageurls = [];
+        namewithunderscore = element.name.split(' ').join('_');
+        surl = 'http://en.wikipedia.org/w/api.php?action=' +
         'parse&format=json&prop=images&section=0&page=' + namewithunderscore +
         '&callback=?';
-    //console.log(namewithunderscore);
-    //console.log(surl);
-    console.log('first ajax called with ' + surl);
-    $.ajax({
-        type: "GET",
-        url: surl,
-        contentType: "application/json; charset=utf-8",
-        async: true,
-        dataType: "jsonp",
-        success: function (data,b,c) {
-            if (data.error) {
-                console.log('AA->');
-                console.log(data);
-                imageurls.push(problem_image);
-                //console.log(data);
-            }
-            else {
-                //per each image get its URL by submitting a second AJAX
-                //getting url of the first image in the page.
-                surlz = 'http://en.wikipedia.org/w/api.php?action=' +
-                'query&titles=Image:' + data.parse.images[0] +
-                '&format=json&prop=imageinfo&iiprop=url' +
-                '&callback=something';
-                //internal json
-                $.ajax({
-                    type:"GET",
-                    url:surlz,
-                    contentType:"application/json; charset=utf-8",
-                    async: true,
-                    dataType: "jsonp",
-                    success: function(dataz) {
-                        temp= dataz.query.pages["-1"].imageinfo["0"].url
-                        console.log(temp);
-                        imageurls.push(temp);
-                        },
-                    error: function(errorMessagez) {
-                         //console.log(errorMessagez);
-                         console.log('indi');
-                        imageurls.push(problem_image);
-                    }
-                }); //end of internal json
-            
+        console.log(surl);
+        $.ajax({
+            type: "GET",
+            url: surl,
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            dataType: "jsonp",
+            success: function (data,b,c) {
+                if (data.error) {
+                    console.log('couldn\'t find this picture in wikipedia ->');
+                    element.imageurls.push(problem_image);
+                    console.log(data);
                 }
-        
-        },
-        error: function (errorMessage) {
+                else {
+                    //per each image get its URL by submitting a second AJAX
+                    //getting url of the first image in the page.
+                    surlz = 'http://en.wikipedia.org/w/api.php?action=' +
+                    'query&titles=Image:' + data.parse.images[0] +
+                    '&format=json&prop=imageinfo&iiprop=url' +
+                    '&callback=something';
+                    //element.imageurls.push(surlz);
+                    //internal json 
+                    $.ajax({
+                        type:"GET",
+                        url:surlz,
+                        contentType:"application/json; charset=utf-8",
+                        async: true,
+                        dataType: "jsonp",
+                        success: function(dataz) {
+                            temp= dataz.query.pages["-1"].imageinfo["0"].url
+                            console.log(temp);
+                            element.imageurls.push(temp);
+                            },
+                        error: function(errorMessagez) {
+                             //console.log(errorMessagez);
+                             console.log('indi');
+                            element.imageurls.push(problem_image);
+                        }
+                    }); //end of internal json 
+
+                    }
+
+                },
+            error: function (errorMessage) {
             console.log('error from wiki api');
-             imageurls.push(problem_image);
+            imageurls.push(problem_image);
         }  
     });//end of main ajax
 }); // end of for i in locations inside ready function
@@ -129,7 +123,7 @@ function initMap() {
     //adding a timeout to wait for wikiurl loads to finish
     setTimeout( function setinfos()
                {
-    console.log(imageurls);
+    
     for (i in places()){
         marker = new google.maps.Marker({
         position: places()[i].loc,
@@ -138,8 +132,8 @@ function initMap() {
         });
         //console.log(imageurls[i]);
         infowindow = new google.maps.InfoWindow({
-            content: '' + places()[i].name + '-' +
-            "<img src='" + imageurls[i] + "'style='width:100px' alt='wiki image'>",
+            content: '<div>' + places()[i].name + '</div>' +
+            "<div><img src='" + locations[i].imageurls[0] + "'style='width:100px' alt='wiki image'></div>",
             maxWidth: '200'
         });    
         markers.push(marker);
