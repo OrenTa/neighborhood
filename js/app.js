@@ -6,6 +6,8 @@ var locations = [
     show:ko.observable(true), id:"0",wikiurl:ko.observable('')},
     {name:"Wat Ratchabopit SathitMahasimaram", loc:{lat:13.750122,lng:100.499171},
     show:ko.observable(true), id:"1",wikiurl:ko.observable('')},
+    {name:"Giant Swing", loc:{lat:13.752040,lng:100.499600},
+    show:ko.observable(true), id:"2",wikiurl:ko.observable('')} /*,
     {name:"Wat Thep Sirin Thrawat",loc:{lat:13.746287,lng:100.509814},
     show:ko.observable(true), id:"2",wikiurl:ko.observable('')},
     {name:"Bobe Market Bridge",loc:{lat:13.753040,lng:100.518741},
@@ -19,7 +21,7 @@ var locations = [
     {name:"Wat saket",loc:{lat:13.760294,lng:100.499861},
     show:ko.observable(true), id:"7",wikiurl:ko.observable('')},
     {name:"Wat saket",loc:{lat:13.760294,lng:100.499861},
-    show:ko.observable(true), id:"8",wikiurl:ko.observable('')} 
+    show:ko.observable(true), id:"8",wikiurl:ko.observable('')} */
 ];
 
 var temptxt; //used for the search term
@@ -48,9 +50,9 @@ loc = {lat:13.750,lng:100.503};
 
 function getwikiurls() {
     
-    for (i in locations){
+    locations.forEach(function(element){
     //this one is used to return the list of wiki images for each location
-    namewithunderscore = locations[i].name.split(' ').join('_');
+    namewithunderscore = element.name.split(' ').join('_');
     surl = 'http://en.wikipedia.org/w/api.php?action=' +
         'parse&format=json&prop=images&section=0&page=' + namewithunderscore +
         '&callback=?';
@@ -104,7 +106,7 @@ function getwikiurls() {
              imageurls.push(problem_image);
         }  
     });//end of main ajax
-} // end of for i in locations inside ready function
+}); // end of for i in locations inside ready function
         
 };//end function getwikiurls
 
