@@ -1,6 +1,17 @@
 "use strict";
 
-//model - holds the data 
+var i;
+var map; //holds the map object
+var places; //used to store the ko.observable array of the list of places
+var markers = []; //stores all the google maps markers
+var infowindows = [];
+
+var problem_image = 'https://fearmastery.files.wordpress.com/2013/07/problems-3.jpg';
+var loc;
+loc = {lat:13.750,lng:100.503};
+
+// model - holds the data 
+// apart of what is shown here the model is also enriched with wikipedia image urls
 var locations = [
     {name:"Wat Ratchabophit", loc:{lat:13.750122,lng:100.499171},
     show:ko.observable(true), id:"0",wikiurl:ko.observable('')},
@@ -18,32 +29,21 @@ var locations = [
     show:ko.observable(true), id:"6",wikiurl:ko.observable('')}
 ];
 
-var temptxt; //used for the search term
-var i;
-var map; //holds the map object
-var places;
-var marker;
-var markers = [];
-var infowindow;
-var infowindows = [];
-var imageurls=[];
-//inits the map and the markers
-
-var url;
-var surlz;
-var markup;
-var y;
-var problem_image = 'https://fearmastery.files.wordpress.com/2013/07/problems-3.jpg';
-
-var loc;
-loc = {lat:13.750,lng:100.503};
-
-
+// utility function which uses the name of each location and fetches img url from wikipedia
+// if the image/page exists we get the image (first image in the page)
+// otherwise I use a default 'problem-image'
+// the function is invoked immediately after it's defined.
+// this function is part of the contol(modelview) as it fetches info from wikipedia and updates the // model (locations) with it.
 function getwikiurls() {
     var temp;
     var namewithunderscore;
     var surl;
+    var surlz;
     
+    // we iterate on the locations
+    // for each location we compose a wikipedia url with the name of the location 
+    // we then call an AJAX to wikipedia to get the image names of the page
+    // we then use the image names and ask wikipedia for the URLs in a second AJAX
     locations.forEach(function(element){
         
         //this one is used to return the list of wiki images for each location
@@ -63,7 +63,6 @@ function getwikiurls() {
                 if (data.error) {
                     console.log('couldn\'t find this picture in wikipedia ->');
                     element.imageurls.push(problem_image);
-                    console.log(data);
                 }
                 else {
                     //per each image get its URL by submitting a second AJAX
@@ -72,7 +71,6 @@ function getwikiurls() {
                     'query&titles=Image:' + data.parse.images[0] +
                     '&format=json&prop=imageinfo&iiprop=url' +
                     '&callback=something';
-                    //element.imageurls.push(surlz);
                     //internal json 
                     $.ajax({
                         type:"GET",
@@ -82,12 +80,9 @@ function getwikiurls() {
                         dataType: "jsonp",
                         success: function(dataz) {
                             temp= dataz.query.pages["-1"].imageinfo["0"].url
-                            console.log(temp);
                             element.imageurls.push(temp);
                             },
                         error: function(errorMessagez) {
-                             //console.log(errorMessagez);
-                             console.log('indi');
                             element.imageurls.push(problem_image);
                         }
                     }); //end of internal json 
@@ -100,13 +95,14 @@ function getwikiurls() {
             imageurls.push(problem_image);
         }  
     });//end of main ajax
-}); // end of for i in locations inside ready function
-        
+});     
 };//end function getwikiurls
-
 
 getwikiurls();
 
+// the Google Maps init function
+// initis the map and add markers
+// it also adds infowindows and attaches these info windows to markers
 function initMap() {
 
     // Constructor creates a new map - only center and zoom are required.
@@ -116,13 +112,13 @@ function initMap() {
     zoom: 15
     });
     
-    var i;
+    var marker;
     var markercopy;
+    var infowindow;
     
     // adds markers and infowindows based on the data in the model
     //adding a timeout to wait for wikiurl loads to finish
-    setTimeout( function setinfos()
-               {
+    setTimeout( function setinfos() {
     
     for (i in places()){
         marker = new google.maps.Marker({
@@ -183,14 +179,21 @@ var ViewModel = function () {
     places = ko.observableArray(locations);
     this.searchTerm = ko.observable("");//this is the searchTerm
     
+    // this function updates the visible markers on the map
+    // according to the show parameter in the array (true/false)
+    function updateMap() {
+        //marker.setVisible(false);
+        for (i in markers) {
+            markers[i].setVisible(places()[i].show());
+        }
+    }
+    
+    // this function is run for filtering the list
+    // it is binded to the search input box in the html
+    // after filtering it calls the updatemap function also defined in the ViewModel
     this.listFilter = function() {
-        //console.clear();
-        temptxt = this.searchTerm();
-        
-        //this.filteredPlaces.removeAll();
         for (i in places()) {
-            //console.log(this.places()[i].name);
-            if (places()[i].name.toLowerCase().includes(temptxt.toLowerCase())){
+            if (places()[i].name.toLowerCase().includes(this.searchTerm().toLowerCase())){
                 places()[i].show(true);
             }
             else {
@@ -198,32 +201,23 @@ var ViewModel = function () {
             }
             
             }
-        updateMap();
+    updateMap();
     }//end of filterfunction.
     
     this.listFilter(); //run this one time on initialization.
 }
-    
-
     
 ko.applyBindings(new ViewModel());
 
 // this function is called on 'mobile view' by clicking the hamburger
 // the binding is done with knockout in the HTML itself
 function showNav() {
-    if (document.getElementById('locations').style.width === '0px') {
-        document.getElementById('locations').style.width = '250px';
+    if (document.getElementById('list').style.width === '0px') {
+        document.getElementById('list').style.width = '250px';
+        document.getElementById('list').style.height = 'auto';
     }
         else {
-    	    document.getElementById('locations').style.width = '0px';
+    	    document.getElementById('list').style.width = '0px';
+            document.getElementById('list').style.height = 'auto';
         }
-}
-
-
-
-function updateMap() {
-    //marker.setVisible(false);
-    for (i in markers) {
-        markers[i].setVisible(places()[i].show());
-    }
 }

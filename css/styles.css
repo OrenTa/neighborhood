@@ -3,27 +3,11 @@ body {
     box-sizing: border-box;
 }
 
-.hamburger {
-    padding: 0px;
-}
-
-.hamburger > div {
-    width: 0px;
-    height: 5px;
-    background-color: lightgrey;
-    margin: 6px 0;
-    padding: 0px;
-}
-
-.title {
-    padding-left: 10px;
-}
-
 .row {
 	color: #cdcdcd;
     display: flex;
     display: -webkit-flex;
-    width: 1000px;
+    width: 80%;
     margin: auto;
 }
 
@@ -41,8 +25,27 @@ body {
     right-margin:0;
 }
 
-.locations {
-    width: 250px;
+.title {
+    padding-left: 10px;
+    padding-top: 22px;
+    font-size: 20px;
+}
+
+.hamburger {
+    padding: 0px;
+}
+
+.hamburger > div {
+    width: 0px;
+    height: 5px;
+    background-color: lightgrey;
+    margin: 6px 0;
+    padding: 0px;
+}
+
+
+.list {
+    width: 25%;
     transition:300ms linear;
  }
 
@@ -52,6 +55,7 @@ body {
     transition: 0.2s;
     line-height: 3em;
     padding-left: 10px;
+    font-size: 1em;
 }
 
 .location:hover {
@@ -59,16 +63,25 @@ body {
 }
 
 .map {
+    width: 75%;
     background-color: lightblue;
     color: black;
-    width: 750px;
-    margin-left,margin-right:0;
+    /*margin-left,margin-right:0;*/
     border-style: solid ;
     
 }
 
 @media only screen and (max-width: 700px) {
-    .locations {
+    .row {
+        color: #cdcdcd;
+        display: flex;
+        display: -webkit-flex;
+        width: 100%;
+        margin: auto;
+    }
+
+    
+    .list {
         /*background-color: lightblue;
         z-index: +2;*/
         width: 0%;
