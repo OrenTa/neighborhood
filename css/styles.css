@@ -80,11 +80,10 @@ body {
         margin: auto;
     }
 
-    
     .list {
         /*background-color: lightblue;
         z-index: +2;*/
-        width: 0%;
+        width: 0px;
     }
 
     .map {
@@ -100,6 +99,16 @@ body {
     height: 5px;
     background-color: lightgrey;
     margin: 6px 0;
+    }
+    
+    .title {
+        font-size: 18px;
+        padding-top: 24px;
+    }
+    
+    .location{
+    line-height: 3em;
+    font-size: 0.6em;
 }
 
 

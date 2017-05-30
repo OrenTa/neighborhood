@@ -10,8 +10,8 @@ var problem_image = 'https://fearmastery.files.wordpress.com/2013/07/problems-3.
 var loc;
 loc = {lat:13.750,lng:100.503};
 
-// model - holds the data 
-// apart of what is shown here the model is also enriched with wikipedia image urls
+// Model - holds the data 
+// apart of what is shown here the model is also enriched later with wikipedia image urls
 var locations = [
     {name:"Wat Ratchabophit", loc:{lat:13.750122,lng:100.499171},
     show:ko.observable(true), id:"0",wikiurl:ko.observable('')},
@@ -29,10 +29,7 @@ var locations = [
     show:ko.observable(true), id:"6",wikiurl:ko.observable('')}
 ];
 
-// utility function which uses the name of each location and fetches img url from wikipedia
-// if the image/page exists we get the image (first image in the page)
-// otherwise I use a default 'problem-image'
-// the function is invoked immediately after it's defined.
+// Fetches img url from wikipedia based on the locations[].name parameter
 // this function is part of the contol(modelview) as it fetches info from wikipedia and updates the // model (locations) with it.
 function getwikiurls() {
     var temp;
@@ -49,7 +46,7 @@ function getwikiurls() {
         //this one is used to return the list of wiki images for each location
         element.imageurls = [];
         namewithunderscore = element.name.split(' ').join('_');
-        surl = 'http://en.wikipedia.org/w/api.php?action=' +
+        surl = 'https://en.wikipedia.org/w/api.php?action=' +
         'parse&format=json&prop=images&section=0&page=' + namewithunderscore +
         '&callback=?';
         console.log(surl);
@@ -67,7 +64,7 @@ function getwikiurls() {
                 else {
                     //per each image get its URL by submitting a second AJAX
                     //getting url of the first image in the page.
-                    surlz = 'http://en.wikipedia.org/w/api.php?action=' +
+                    surlz = 'https://en.wikipedia.org/w/api.php?action=' +
                     'query&titles=Image:' + data.parse.images[0] +
                     '&format=json&prop=imageinfo&iiprop=url' +
                     '&callback=something';
@@ -92,35 +89,54 @@ function getwikiurls() {
                 },
             error: function (errorMessage) {
             console.log('error from wiki api');
-            imageurls.push(problem_image);
+            element.imageurls.push(problem_image);
         }  
     });//end of main ajax
 });     
 };//end function getwikiurls
 
-getwikiurls();
-
-// the Google Maps init function
-// initis the map and add markers
-// it also adds infowindows and attaches these info windows to markers
+// Google Maps init function
 function initMap() {
-
-    // Constructor creates a new map - only center and zoom are required.
-    
     map = new google.maps.Map(document.getElementById('map'), {
     center: loc,
     zoom: 15
     });
+}
+
+// Attaches event listeners to the list for clicking
+// also defines the ui behavior upon this click ... 
+// ToDo: replace the test to a more robust one.
+$(document).ready(function(){ 
+    $("#locationslist").children("div").each(function() {
+       $(this).click(function(){
+        if (infowindows[4]) {
+        for (i in infowindows) {
+          infowindows[i].close();  
+        }
+        infowindows[parseInt($(this).attr('id'))].open(map, markers[parseInt($(this).attr('id'))]);
+        }
+        $(this).parent().find("div").css("background-color","white");
+        $(this).css("background-color","orange");
+       })
+    });     
+}); //the ready function
+
+// KO viewModel
+// Adds to the map markers and infowindows and attaches these info windows to markers
+var ViewModel = function () {
+    places = ko.observableArray(locations);
+    this.searchTerm = ko.observable("");//this is the searchTerm
     
     var marker;
     var markercopy;
     var infowindow;
     
+    getwikiurls();
+    
     // adds markers and infowindows based on the data in the model
     //adding a timeout to wait for wikiurl loads to finish
     setTimeout( function setinfos() {
-    
-    for (i in places()){
+        for (i in places()){
         marker = new google.maps.Marker({
         position: places()[i].loc,
         map: map,
@@ -145,39 +161,10 @@ function initMap() {
                     markercopy.setAnimation(null);
                 }, 1200);
             };
-        }
-        
+        }        
     }
     }
-               ,2000);//this is the end of setTimeout
-    
-}
-
-
-// jquery
-// used to attach event listeners to the list for clicking
-// and defines the ui behavior upon this click ... 
-// also used to fetch the wikipedia infos
-$(document).ready(function(){
-    
-    $("#locationslist").children("div").each(function() {
-       $(this).click(function(){
-        for (i in infowindows) {
-          infowindows[i].close();  
-        }
-        infowindows[parseInt($(this).attr('id'))].open(map, markers[parseInt($(this).attr('id'))]);
-        $(this).parent().find("div").css("background-color","white");
-        $(this).css("background-color","orange");
-       })
-    });  
-    
-}); //the ready function
-
-
-//ko viewModel
-var ViewModel = function () {
-    places = ko.observableArray(locations);
-    this.searchTerm = ko.observable("");//this is the searchTerm
+   ,1500);//this is the end of setTimeout 
     
     // this function updates the visible markers on the map
     // according to the show parameter in the array (true/false)
@@ -187,6 +174,7 @@ var ViewModel = function () {
             markers[i].setVisible(places()[i].show());
         }
     }
+    
     
     // this function is run for filtering the list
     // it is binded to the search input box in the html
@@ -205,19 +193,20 @@ var ViewModel = function () {
     }//end of filterfunction.
     
     this.listFilter(); //run this one time on initialization.
-}
+} // end of viewmode function
     
 ko.applyBindings(new ViewModel());
 
-// this function is called on 'mobile view' by clicking the hamburger
-// the binding is done with knockout in the HTML itself
+// Shows or hides the side navigation in 'mobile view' 
+// the binding is done with knockout in the HTML itself to the 'hamburger'
 function showNav() {
     if (document.getElementById('list').style.width === '0px') {
         document.getElementById('list').style.width = '250px';
         document.getElementById('list').style.height = 'auto';
     }
         else {
-    	    document.getElementById('list').style.width = '0px';
+    	    //console.log('width is not 0px but ' + document.getElementById('list').style.width)
+            document.getElementById('list').style.width = '0px';
             document.getElementById('list').style.height = 'auto';
         }
 }

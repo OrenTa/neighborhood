@@ -40,7 +40,6 @@ wait - there's the general list and there's a list to show which is a filtered f
         	   <div class="list" id="list"> 
                     <div class="search">
                         <input id="search_text" type="text" name="search_text" data-bind='textInput:searchTerm, valueUpdate: "afterkeyup", event:{input: listFilter}'>
-                        <button id="search_button" type="button">search</button>
                     </div>
 	            	<div class="locations" data-bind="foreach: places" id="locationslist">
                         <div class="location" data-bind="if: $data.show, attr: {id:$data.id}"> 
