@@ -9,25 +9,25 @@ var infowindows = [];
 
 var PROBLEM_IMAGE = 'https://fearmastery.files.wordpress.com/2013/07/problems-3.jpg';
 var loc;
-loc = {lat:13.750,lng:100.503};
+loc = {lat: 13.750, lng: 100.503};
 
 // Model - holds the data 
 // apart of what is shown here the model is also enriched later with wikipedia image urls
 var locations = [
-    {name:"Wat Ratchabophit", loc:{lat:13.750122,lng:100.499171},
-    show:ko.observable(true), id:"0",wikiurl:ko.observable('')},
-    {name:"Giant Swing", loc:{lat:13.752040,lng:100.499600},
-    show:ko.observable(true), id:"1",wikiurl:ko.observable('')},
-    {name:"Wat Thep Sirin Thrawat",loc:{lat:13.746287,lng:100.509814},
-    show:ko.observable(true), id:"2",wikiurl:ko.observable('')},
-    {name:"Bobe Market Bridge",loc:{lat:13.753040,lng:100.518741},
-    show:ko.observable(true), id:"3",wikiurl:ko.observable('')},
-    {name:"Wat Mangkon Kamalawat",loc:{lat:13.7436,lng:100.511874},
-    show:ko.observable(true), id:"4",wikiurl:ko.observable('')},
-    {name:"Wat Bowonniwet Vihara", loc:{lat:13.75445,lng:100.505351}, 
-    show:ko.observable(true), id:"5",wikiurl:ko.observable('')}, 
-    {name:"Wat saket",loc:{lat:13.760294,lng:100.499861},
-    show:ko.observable(true), id:"6",wikiurl:ko.observable('')}
+    {name: "Wat Ratchabophit", loc: {lat: 13.750122, lng: 100.499171},
+        show: ko.observable(true), id: "0", wikiurl: ko.observable('')},
+    {name: "Giant Swing", loc: {lat: 13.752040, lng: 100.499600},
+        show: ko.observable(true), id: "1", wikiurl: ko.observable('')},
+    {name: "Wat Thep Sirin Thrawat", loc: {lat: 13.746287, lng: 100.509814},
+        show: ko.observable(true), id: "2", wikiurl: ko.observable('')},
+    {name: "Bobe Market Bridge", loc: {lat: 13.753040, lng: 100.518741},
+        show: ko.observable(true), id: "3", wikiurl: ko.observable('')},
+    {name: "Wat Mangkon Kamalawat", loc: {lat: 13.7436, lng: 100.511874},
+        show: ko.observable(true), id: "4", wikiurl: ko.observable('')},
+    {name: "Wat Bowonniwet Vihara", loc: {lat: 13.75445, lng: 100.505351},
+        show: ko.observable(true), id: "5", wikiurl: ko.observable('')},
+    {name: "Wat saket", loc: {lat: 13.760294, lng: 100.499861},
+        show: ko.observable(true), id: "6", wikiurl: ko.observable('')}
 ];
 
 // Fetches img url from wikipedia based on the locations[].name parameter
@@ -42,14 +42,14 @@ function getwikiurls() {
     // for each location we compose a wikipedia url with the name of the location 
     // we then call an AJAX to wikipedia to get the image names of the page
     // we then use the image names and ask wikipedia for the URLs in a second AJAX
-    locations.forEach(function(element){
+    locations.forEach(function (element) {
         
         //this one is used to return the list of wiki images for each location
         element.imageurls = [];
         namewithunderscore = element.name.split(' ').join('_');
         surl = 'https://en.wikipedia.org/w/api.php?action=' +
-        'parse&format=json&prop=images&section=0&page=' + namewithunderscore +
-        '&callback=?';
+            'parse&format=json&prop=images&section=0&page=' + namewithunderscore +
+            '&callback=?';
         console.log(surl);
         $.ajax({
             type: "GET",
@@ -57,18 +57,17 @@ function getwikiurls() {
             contentType: "application/json; charset=utf-8",
             async: true,
             dataType: "jsonp",
-            success: function (data,b,c) {
+            success: function (data, b, c) {
                 if (data.error) {
                     console.log('couldn\'t find this picture in wikipedia ->');
                     element.imageurls.push(PROBLEM_IMAGE);
-                }
-                else {
+                } else {
                     //per each image get its URL by submitting a second AJAX
                     //getting url of the first image in the page.
                     surlz = 'https://en.wikipedia.org/w/api.php?action=' +
-                    'query&titles=Image:' + data.parse.images[0] +
-                    '&format=json&prop=imageinfo&iiprop=url' +
-                    '&callback=something';
+                        'query&titles=Image:' + data.parse.images[0] +
+                        '&format=json&prop=imageinfo&iiprop=url' +
+                        '&callback=something';
                     //internal json 
                     $.ajax({
                         type:"GET",
