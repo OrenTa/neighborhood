@@ -203,3 +203,7 @@ function showNav() {
         document.getElementById('list').style.height = 'auto';
     }
 }
+
+function googleError() {
+	window.alert('Error while loading Google Maps');
+}
