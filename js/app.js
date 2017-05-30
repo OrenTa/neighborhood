@@ -1,4 +1,5 @@
 "use strict";
+/*jshint loopfunc: true */
 
 var i;
 var map; //holds the map object
@@ -76,7 +77,7 @@ function getwikiurls() {
                         async: true,
                         dataType: "jsonp",
                         success: function(dataz) {
-                            temp= dataz.query.pages["-1"].imageinfo["0"].url
+                            temp= dataz.query.pages["-1"].imageinfo["0"].url;
                             element.imageurls.push(temp);
                             },
                         error: function(errorMessagez) {
@@ -93,7 +94,7 @@ function getwikiurls() {
         }  
     });//end of main ajax
 });     
-};//end function getwikiurls
+}//end function getwikiurls
 
 // Google Maps init function
 function initMap() {
@@ -110,14 +111,14 @@ $(document).ready(function(){
     $("#locationslist").children("div").each(function() {
        $(this).click(function(){
         if (infowindows[4]) {
-        for (i in infowindows) {
+        for (i = 0; i < infowindows.length; i++) {
           infowindows[i].close();  
         }
         infowindows[parseInt($(this).attr('id'))].open(map, markers[parseInt($(this).attr('id'))]);
         }
         $(this).parent().find("div").css("background-color","white");
         $(this).css("background-color","orange");
-       })
+       });
     });     
 }); //the ready function
 
@@ -128,7 +129,6 @@ var ViewModel = function () {
     this.searchTerm = ko.observable("");//this is the searchTerm
     
     var marker;
-    var markercopy;
     var infowindow;
     
     getwikiurls();
@@ -136,7 +136,7 @@ var ViewModel = function () {
     // adds markers and infowindows based on the data in the model
     //adding a timeout to wait for wikiurl loads to finish
     setTimeout( function setinfos() {
-        for (i in places()){
+        for (i = 0; i < places().length; i++){
         marker = new google.maps.Marker({
         position: places()[i].loc,
         map: map,
@@ -151,9 +151,7 @@ var ViewModel = function () {
         markers.push(marker);
         infowindows.push(infowindow);
         
-        marker.addListener('click', infoShow(marker,infowindow));
-        
-        function infoShow (markercopy, infocopy) {
+        var infoShow = function (markercopy, infocopy) {
             return function() {
                 infocopy.open(map, markercopy);
                 markercopy.setAnimation(google.maps.Animation.BOUNCE);
@@ -161,16 +159,18 @@ var ViewModel = function () {
                     markercopy.setAnimation(null);
                 }, 1200);
             };
-        }        
-    }
-    }
-   ,1500);//this is the end of setTimeout 
+        };
+            
+        marker.addListener('click', infoShow(marker,infowindow));
+        
+        }} ,1500
+      ); // this is the end of setTimeout 
     
     // this function updates the visible markers on the map
     // according to the show parameter in the array (true/false)
     function updateMap() {
         //marker.setVisible(false);
-        for (i in markers) {
+        for (i = 0; i < markers.length; i++) {
             markers[i].setVisible(places()[i].show());
         }
     }
@@ -180,7 +180,7 @@ var ViewModel = function () {
     // it is binded to the search input box in the html
     // after filtering it calls the updatemap function also defined in the ViewModel
     this.listFilter = function() {
-        for (i in places()) {
+        for (i = 0 ; i < places().length; i++) {
             if (places()[i].name.toLowerCase().includes(this.searchTerm().toLowerCase())){
                 places()[i].show(true);
             }
@@ -190,10 +190,10 @@ var ViewModel = function () {
             
             }
     updateMap();
-    }//end of filterfunction.
+    };//end of filterfunction.
     
     this.listFilter(); //run this one time on initialization.
-} // end of viewmode function
+}; // end of viewmode function
     
 ko.applyBindings(new ViewModel());
 
