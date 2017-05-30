@@ -7,7 +7,7 @@ var places; //used to store the ko.observable array of the list of places
 var markers = []; //stores all the google maps markers
 var infowindows = [];
 
-var problem_image = 'https://fearmastery.files.wordpress.com/2013/07/problems-3.jpg';
+var PROBLEM_IMAGE = 'https://fearmastery.files.wordpress.com/2013/07/problems-3.jpg';
 var loc;
 loc = {lat:13.750,lng:100.503};
 
@@ -60,7 +60,7 @@ function getwikiurls() {
             success: function (data,b,c) {
                 if (data.error) {
                     console.log('couldn\'t find this picture in wikipedia ->');
-                    element.imageurls.push(problem_image);
+                    element.imageurls.push(PROBLEM_IMAGE);
                 }
                 else {
                     //per each image get its URL by submitting a second AJAX
@@ -81,7 +81,7 @@ function getwikiurls() {
                             element.imageurls.push(temp);
                             },
                         error: function(errorMessagez) {
-                            element.imageurls.push(problem_image);
+                            element.imageurls.push(PROBLEM_IMAGE);
                         }
                     }); //end of internal json 
 
@@ -90,7 +90,7 @@ function getwikiurls() {
                 },
             error: function (errorMessage) {
             console.log('error from wiki api');
-            element.imageurls.push(problem_image);
+            element.imageurls.push(PROBLEM_IMAGE);
         }  
     });//end of main ajax
 });     
