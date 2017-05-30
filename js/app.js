@@ -107,7 +107,7 @@ function initMap() {
 // also defines the ui behavior upon this click ... 
 // ToDo: replace the test to a more robust one.
 $(document).ready(function(){ 
-    $("#locationslist").children("div").each(function() {
+    /* $("#locationslist").children("div").each(function() {
        $(this).click(function(){
         if (infowindows[4]) {
         for (i = 0; i < infowindows.length; i++) {
@@ -118,7 +118,7 @@ $(document).ready(function(){
         $(this).parent().find("div").css("background-color","white");
         $(this).css("background-color","orange");
        });
-    });     
+    }); */
 }); //the ready function
 
 // KO viewModel
@@ -174,6 +174,16 @@ var ViewModel = function () {
         }
     }
     
+    this.showInfoWindow = function() {
+        if (infowindows[4]) {
+        for (i = 0; i < infowindows.length; i++) {
+          infowindows[i].close();  
+        }
+        infowindows[parseInt($(this).attr('id'))].open(map, markers[parseInt($(this).attr('id'))]);
+        }
+        $(this).parent().find("div").css("background-color","white");
+        $(this).css("background-color","orange");
+    };   
     
     // this function is run for filtering the list
     // it is binded to the search input box in the html
