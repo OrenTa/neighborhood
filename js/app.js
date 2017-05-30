@@ -155,13 +155,20 @@ var ViewModel = function () {
     }
     
     this.locationClicked = function () {
-        if (infowindows[4]) {
+        var tempmarker = markers[parseInt($(this).attr('id'))];
+		if (infowindows[4]) {
             for (i = 0; i < infowindows.length; i++) {
                 infowindows[i].close();
             }
-            infowindows[parseInt($(this).attr('id'))].open(map, markers[parseInt($(this).attr('id'))]);
+            infowindows[parseInt($(this).attr('id'))].open(map, tempmarker);
+			tempmarker.setAnimation(google.maps.Animation.BOUNCE);
+			setTimeout(function () {
+                            tempmarker.setAnimation(null);
+                        }, 1200);
+			
         }
-        $(this).parent().find("div").css("background-color", "white");
+        
+		$(this).parent().find("div").css("background-color", "white");
         $(this).css("background-color", "orange");
     };
     
