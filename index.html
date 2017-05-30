@@ -1,30 +1,15 @@
-<!-- 
-split the code to model and viewmodel
-
-read instructions 
-
-Generally I need to:
-- have an array with my points of interest. each point is an object with a couple of pair values. 
-- there will be a view function which loads the data points from the model into the view
-- there will be a view function which calls the vm after the search and get a result ? or other...
-wait - there's the general list and there's a list to show which is a filtered for view
-- I can have two models list and filtered_list. filtered list can live in the view-model and be updated after each call from the view ...
-
--->
-
 <!doctype html>
 <html lang="en">
 	
-    <head>
+	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Udacity Project</title>
 		<link rel="stylesheet" href="css/styles.css"> 
-        <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans" rel="stylesheet">
-        <script src="js/lib/jquery-3.2.1.min.js"></script>
+		<link href="https://fonts.googleapis.com/css?family=Merriweather+Sans" rel="stylesheet">
 	</head>
     
-    <!-- dsfsdf -->
+	<!-- dsfsdf -->
 	<body>
 		<div class="row header" onclick="">
 			<h1 class="hamburger" onclick="showNav()">
@@ -32,29 +17,29 @@ wait - there's the general list and there's a list to show which is a filtered f
 				<div></div>
 				<div></div>
 			</h1>
-			<div class="title">
-            Bangkok Neighborhood Map
+			<div class="title"> Bangkok Neighborhood Map
 			</div>
 		</div>
-        <div class="row main">
-        	   <div class="list" id="list"> 
-                    <div class="search">
-                        <input id="search_text" type="text" name="search_text" data-bind='textInput:searchTerm, valueUpdate: "afterkeyup", event:{input: listFilter}'>
-                    </div>
-	            	<div class="locations" data-bind="foreach: places" id="locationslist">
-                        <div class="location" data-bind='if: $data.show, attr: {id:$data.id}, click: $parent.locationClicked'> 
-                        <span data-bind="text: $data.name"></span>
-                        </div>
-                    </div>
-	           </div>
-	           <div class="map" id="map"> The map will be here </div>
-	    </div>
-        <script type='text/javascript' src='js/lib/knockout-3.4.2.js'></script>
-        <script type="text/javascript" src="js/app.js"></script>
-        <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzDkhZsq1rIPlZrdsacAvYq0f8w_Gz8KY&v=3&callback=initMap">
-        </script>
-    </body>
+		<div class="row main">
+        	<div class="list" id="list"> 
+				<div class="search">
+					<input id="search_text" type="text" name="search_text" data-bind='textInput:searchTerm, valueUpdate: "afterkeyup", event:{input: listFilter}'>
+				</div>
+				<div class="locations" data-bind="foreach: places" id="locationslist">
+					<div class="location" data-bind='if: $data.show, attr: {id:$data.id}, click: $parent.locationClicked'> 
+						<span data-bind="text: $data.name"></span>
+					</div>
+				</div>
+			</div>
+			<div class="map" id="map"> The map will be here </div>
+		</div>
+		<script src="js/lib/jquery-3.2.1.min.js"></script>
+		<script type='text/javascript' src='js/lib/knockout-3.4.2.js'></script>
+		<script type="text/javascript" src="js/app.js"></script>
+		<script async defer
+				src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzDkhZsq1rIPlZrdsacAvYq0f8w_Gz8KY&v=3&callback=initMap">
+		</script>
+	</body>
     
 </html>
 
