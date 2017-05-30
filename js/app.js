@@ -70,56 +70,36 @@ function getwikiurls() {
                         '&callback=something';
                     //internal json 
                     $.ajax({
-                        type:"GET",
-                        url:surlz,
-                        contentType:"application/json; charset=utf-8",
+                        type: "GET",
+                        url: surlz,
+                        contentType: "application/json; charset=utf-8",
                         async: true,
                         dataType: "jsonp",
-                        success: function(dataz) {
-                            temp= dataz.query.pages["-1"].imageinfo["0"].url;
+                        success: function (dataz) {
+                            temp = dataz.query.pages["-1"].imageinfo["0"].url;
                             element.imageurls.push(temp);
-                            },
-                        error: function(errorMessagez) {
+                        },
+                        error: function (errorMessagez) {
                             element.imageurls.push(PROBLEM_IMAGE);
                         }
                     }); //end of internal json 
-
-                    }
-
-                },
+                }
+            },
             error: function (errorMessage) {
-            console.log('error from wiki api');
-            element.imageurls.push(PROBLEM_IMAGE);
-        }  
-    });//end of main ajax
-});     
+                console.log('error from wiki api');
+                element.imageurls.push(PROBLEM_IMAGE);
+            }
+        });//end of main ajax
+    });
 }//end function getwikiurls
 
 // Google Maps init function
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
-    center: loc,
-    zoom: 15
+        center: loc,
+        zoom: 15
     });
 }
-
-// Attaches event listeners to the list for clicking
-// also defines the ui behavior upon this click ... 
-// ToDo: replace the test to a more robust one.
-$(document).ready(function(){ 
-    /* $("#locationslist").children("div").each(function() {
-       $(this).click(function(){
-        if (infowindows[4]) {
-        for (i = 0; i < infowindows.length; i++) {
-          infowindows[i].close();  
-        }
-        infowindows[parseInt($(this).attr('id'))].open(map, markers[parseInt($(this).attr('id'))]);
-        }
-        $(this).parent().find("div").css("background-color","white");
-        $(this).css("background-color","orange");
-       });
-    }); */
-}); //the ready function
 
 // KO viewModel
 // Adds to the map markers and infowindows and attaches these info windows to markers
@@ -127,43 +107,43 @@ var ViewModel = function () {
     places = ko.observableArray(locations);
     this.searchTerm = ko.observable("");//this is the searchTerm
     
-    var marker;
-    var infowindow;
+    var marker, infowindow;
     
     getwikiurls();
     
     // adds markers and infowindows based on the data in the model
     //adding a timeout to wait for wikiurl loads to finish
-    setTimeout( function setinfos() {
-        for (i = 0; i < places().length; i++){
-        marker = new google.maps.Marker({
-        position: places()[i].loc,
-        map: map,
-        title: places()[i].name
-        });
-        //console.log(imageurls[i]);
-        infowindow = new google.maps.InfoWindow({
-            content: '<div>' + places()[i].name + '</div>' +
-            "<div><img src='" + locations[i].imageurls[0] + "'style='width:100px' alt='wiki image'></div>",
-            maxWidth: '200'
-        });    
-        markers.push(marker);
-        infowindows.push(infowindow);
+    setTimeout(function setinfos() {
+        for (i = 0; i < places().length; i++) {
+            marker = new google.maps.Marker({
+                position: places()[i].loc,
+                map: map,
+                title: places()[i].name
+            });
+            //console.log(imageurls[i]);
+            infowindow = new google.maps.InfoWindow({
+                content: '<div>' + places()[i].name + '</div>' +
+                    "<div><img src='" + locations[i].imageurls[0] + "'style='width:100px' alt='wiki image'></div>",
+                maxWidth: '200'
+            });
+            markers.push(marker);
+            infowindows.push(infowindow);
         
-        var infoShow = function (markercopy, infocopy) {
-            return function() {
-                infocopy.open(map, markercopy);
-                markercopy.setAnimation(google.maps.Animation.BOUNCE);
-                setTimeout(function() {
-                    markercopy.setAnimation(null);
-                }, 1200);
-            };
-        };
+            var infoShow = function (markercopy, infocopy) {
+                    return function () {
+                        infocopy.open(map, markercopy);
+                        markercopy.setAnimation(google.maps.Animation.BOUNCE);
+                        setTimeout(function () {
+                            markercopy.setAnimation(null);
+                        }, 1200);
+                    };
+                };
             
-        marker.addListener('click', infoShow(marker,infowindow));
+            marker.addListener('click', infoShow(marker, infowindow));
         
-        }} ,1500
-      ); // this is the end of setTimeout 
+        }
+    }, 1500
+        ); // this is the end of setTimeout 
     
     // this function updates the visible markers on the map
     // according to the show parameter in the array (true/false)
@@ -174,31 +154,29 @@ var ViewModel = function () {
         }
     }
     
-    this.showInfoWindow = function() {
+    this.locationClicked = function () {
         if (infowindows[4]) {
-        for (i = 0; i < infowindows.length; i++) {
-          infowindows[i].close();  
+            for (i = 0; i < infowindows.length; i++) {
+                infowindows[i].close();
+            }
+            infowindows[parseInt($(this).attr('id'))].open(map, markers[parseInt($(this).attr('id'))]);
         }
-        infowindows[parseInt($(this).attr('id'))].open(map, markers[parseInt($(this).attr('id'))]);
-        }
-        $(this).parent().find("div").css("background-color","white");
-        $(this).css("background-color","orange");
-    };   
+        $(this).parent().find("div").css("background-color", "white");
+        $(this).css("background-color", "orange");
+    };
     
     // this function is run for filtering the list
     // it is binded to the search input box in the html
     // after filtering it calls the updatemap function also defined in the ViewModel
-    this.listFilter = function() {
-        for (i = 0 ; i < places().length; i++) {
-            if (places()[i].name.toLowerCase().includes(this.searchTerm().toLowerCase())){
+    this.listFilter = function () {
+        for (i = 0; i < places().length; i++) {
+            if (places()[i].name.toLowerCase().includes(this.searchTerm().toLowerCase())) {
                 places()[i].show(true);
-            }
-            else {
+            } else {
                 places()[i].show(false);
             }
-            
-            }
-    updateMap();
+        }
+        updateMap();
     };//end of filterfunction.
     
     this.listFilter(); //run this one time on initialization.
@@ -212,10 +190,9 @@ function showNav() {
     if (document.getElementById('list').style.width === '0px') {
         document.getElementById('list').style.width = '250px';
         document.getElementById('list').style.height = 'auto';
+    } else {
+        //console.log('width is not 0px but ' + document.getElementById('list').style.width)
+        document.getElementById('list').style.width = '0px';
+        document.getElementById('list').style.height = 'auto';
     }
-        else {
-    	    //console.log('width is not 0px but ' + document.getElementById('list').style.width)
-            document.getElementById('list').style.width = '0px';
-            document.getElementById('list').style.height = 'auto';
-        }
 }
