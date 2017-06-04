@@ -161,8 +161,8 @@ var ViewModel = function () {
 
 	// animates the marker and shows its infowindow upon click in the list
 	this.locationClicked = function () {
-		var tempmarker = markers[parseInt($(this).attr('id'))];
-		infoShow(tempmarker,parseInt($(this).attr('id')))();	
+		var tempmarker = markers[parseInt(this.id)];
+		infoShow(tempmarker,parseInt(this.id))();	
 		$(this).parent().find('div').css('background-color', 'white');
 		$(this).css('background-color', 'orange');
 	};
