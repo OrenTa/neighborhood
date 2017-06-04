@@ -98,61 +98,69 @@ var ViewModel = function () {
 					} else {
 						element.imageurl = PROBLEM_IMAGE;
 					}
-					marker = new google.maps.Marker({
-						position: element.loc,
-						map: map,
-						title: element.name
-					});
-					infowindow = new google.maps.InfoWindow({
-						content: '<div>' + element.name + '</div>' + 
-						"<div><img src='" + element.imageurl + "'style='width:100px' alt='wiki image'></div>",
-						maxWidth: '200'
-					});
-					markers.push(marker);
-					infowindows.push(infowindow);
-					
-					var infoShow = function (markercopy, infocopy) {
-						return function () {
-							infocopy.open(map, markercopy);
-							markercopy.setAnimation(google.maps.Animation.BOUNCE);
-							setTimeout(function () {
-								markercopy.setAnimation(null);
-							}, 1200);
-						};
-					};
-					
-					marker.addListener('click', infoShow(marker, infowindow));
-					
-				}); // end of last then
-			});
-		}); // end of forEach
-	} // end of function getData
-		
+                    return element;
+                });
+              });
+	      }); // end of forEach
+				
+	   } // end of getDatafunction 
+        	
 	getData();
-	           
+	
+	var temploc;
+	
+	// this function loops on locations[] and add the markers to google maps
+	// it also adds a click listener for each one to open an infowindow
+	// the infowindow content is set according to the marker/location
+	var setMarkers = function() {	
+		
+		 infowindow = new google.maps.InfoWindow({
+						  content: '<div>' + 'name goes here' + '</div>' + 
+						  "<div><img src='" + 'image url will go here' + "'style='width:100px' alt='wiki image'></div>",
+						  maxWidth: '200'
+					   });
+		
+		for (i = 0; i < locations.length; i++) {
+			temploc = locations[i];
+			marker = new google.maps.Marker({
+				position: temploc.loc,
+				map: map,
+				title: temploc.name
+			});
+			markers.push(marker);
+			marker.addListener('click', infoShow(marker,i));
+		} //end creating markers
+	}// end function setMarkers()
+	
+	// this is the click function for the markers - it basically sets the infowindow and opens it
+	var infoShow = function (markercopy, icopy ) {
+                            return function () {
+                                var tempcont = '<div>' + locations[icopy].name + '</div>' + 
+									"<div><img src='" + locations[icopy].imageurl + "'style='width:100px' alt='wiki image'></div>"
+								infowindow.setContent(tempcont);
+								infowindow.open(map, markercopy);
+                                markercopy.setAnimation(google.maps.Animation.BOUNCE);
+                                setTimeout(function () {
+                                    markercopy.setAnimation(null);
+                                }, 1200);
+							};
+	};
+	
+	setMarkers();
+                 
     // this function updates the visible markers on the map
     // according to the show parameter in the array (true/false)
     function updateMap() {
         //marker.setVisible(false);
         for (i = 0; i < markers.length; i++) {
-            markers[i].setVisible(places()[i].show());
+			markers[i].setVisible(places()[i].show());
         }
     }
     
+	// animates the marker and shows its infowindow upon click in the list
     this.locationClicked = function () {
         var tempmarker = markers[parseInt($(this).attr('id'))];
-		if (infowindows[4]) {
-            for (i = 0; i < infowindows.length; i++) {
-                infowindows[i].close();
-            }
-            infowindows[parseInt($(this).attr('id'))].open(map, tempmarker);
-			tempmarker.setAnimation(google.maps.Animation.BOUNCE);
-			setTimeout(function () {
-				tempmarker.setAnimation(null);
-			}, 1200);
-			
-        }
-        
+		infoShow(tempmarker,parseInt($(this).attr('id')))();	
 		$(this).parent().find("div").css("background-color", "white");
         $(this).css("background-color", "orange");
     };
@@ -173,6 +181,7 @@ var ViewModel = function () {
     
     this.listFilter(); //run this one time on initialization.
 }; // end of viewmode function
+
 
 // Shows or hides the side navigation in 'mobile view' 
 // the binding is done with knockout in the HTML itself to the 'hamburger'
