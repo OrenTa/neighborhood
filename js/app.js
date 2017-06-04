@@ -100,6 +100,8 @@ var ViewModel = function () {
 					}
 					return element;
 				});
+			}).catch( function () {
+				window.alert('some issue with the second wikipedia API');
 			});
 		}); // end of forEach
 				
