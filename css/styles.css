@@ -1,5 +1,5 @@
 body {
-	font-family: 'Merriweather Sans', sans-serif;
+	font-family: "Merriweather Sans", sans-serif;
 	box-sizing: border-box;
 }
 
@@ -14,15 +14,15 @@ body {
 .header {
 	background-color: black;
 	height: 4em;
-	left-margin:0;
-	right-margin:0;
+	left-margin: 0;
+	right-margin: 0;
 }
 
 .main {
 	background-color: white;
 	height: 600px;
-	left-margin:0;
-	right-margin:0;
+	left-margin: 0;
+	right-margin: 0;
 }
 
 .title {
@@ -46,10 +46,10 @@ body {
 
 .list {
 	width: 25%;
-	transition:300ms linear;
+	transition: 300ms linear;
 }
 
-.location{
+.location {
 	color: black;
 	border-style: none none solid solid;
 	transition: 0.2s;
@@ -67,7 +67,7 @@ body {
 	background-color: lightblue;
 	color: black;
 	/*margin-left,margin-right:0;*/
-	border-style: solid ;
+	border-style: solid;
 }
 
 @media only screen and (max-width: 700px) {
@@ -103,7 +103,7 @@ body {
 		padding-top: 24px;
 	}
 
-	.location{
+	.location {
 		line-height: 3em;
 		font-size: 0.6em;
 }
@@ -114,13 +114,13 @@ body {
 .search {
 	border-color: black;
 	border-style: solid none solid solid;
-	padding:5px;
+	padding: 5px;
 }
 
 .search > input {
-	width:100px;
+	width: 100px;
 }
 
 .search > button {
-	margin-left:10px;
+	margin-left: 10px;
 }
