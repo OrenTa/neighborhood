@@ -6,7 +6,6 @@ var i;
 var map; //holds the map object
 var places; //used to store the ko.observable array of the list of places
 var markers = []; //stores all the google maps markers
-var infowindows = [];
 
 var PROBLEM_IMAGE = 'https://fearmastery.files.wordpress.com/2013/07/problems-3.jpg';
 var loc;
@@ -15,22 +14,22 @@ loc = {lat: 13.750, lng: 100.503};
 // Model - holds the data 
 // apart of what is shown here the model is also enriched later with wikipedia image urls
 var locations = [
-    {name: "Wat Ratchabophit", loc: {lat: 13.750122, lng: 100.499171},
-        show: ko.observable(true), id: "0", wikiurl: ko.observable('')},
-    {name: "Giant Swing", loc: {lat: 13.752040, lng: 100.499600},
-        show: ko.observable(true), id: "1", wikiurl: ko.observable('')},
-    {name: "Wat Thep Sirin Thrawat", loc: {lat: 13.746287, lng: 100.509814},
-        show: ko.observable(true), id: "2", wikiurl: ko.observable('')},
-    {name: "Bobe Market Bridge", loc: {lat: 13.753040, lng: 100.518741},
-        show: ko.observable(true), id: "3", wikiurl: ko.observable('')},
-    {name: "Wat Mangkon Kamalawat", loc: {lat: 13.7436, lng: 100.511874},
-        show: ko.observable(true), id: "4", wikiurl: ko.observable('')},
-    {name: "Wat Bowonniwet Vihara", loc: {lat: 13.75445, lng: 100.505351},
-        show: ko.observable(true), id: "5", wikiurl: ko.observable('')},
-    {name: "Wat saket", loc: {lat: 13.760294, lng: 100.499861},
-        show: ko.observable(true), id: "6", wikiurl: ko.observable('')},
-	{name: "Thammasat University", loc: {lat: 13.759400, lng: 100.491093},
-        show: ko.observable(true), id: "7", wikiurl: ko.observable('')}
+    {name: 'Wat Ratchabophit', loc: {lat: 13.750122, lng: 100.499171},
+        show: ko.observable(true), id: '0', wikiurl: ko.observable('')},
+    {name: 'Giant Swing', loc: {lat: 13.752040, lng: 100.499600},
+        show: ko.observable(true), id: '1', wikiurl: ko.observable('')},
+    {name: 'Wat Thep Sirin Thrawat', loc: {lat: 13.746287, lng: 100.509814},
+        show: ko.observable(true), id: '2', wikiurl: ko.observable('')},
+    {name: 'Bobe Market Bridge', loc: {lat: 13.753040, lng: 100.518741},
+        show: ko.observable(true), id: '3', wikiurl: ko.observable('')},
+    {name: 'Wat Mangkon Kamalawat', loc: {lat: 13.7436, lng: 100.511874},
+        show: ko.observable(true), id: '4', wikiurl: ko.observable('')},
+    {name: 'Wat Bowonniwet Vihara', loc: {lat: 13.75445, lng: 100.505351},
+        show: ko.observable(true), id: '5', wikiurl: ko.observable('')},
+    {name: 'Wat saket', loc: {lat: 13.760294, lng: 100.499861},
+        show: ko.observable(true), id: '6', wikiurl: ko.observable('')},
+	{name: 'Thammasat University', loc: {lat: 13.759400, lng: 100.491093},
+        show: ko.observable(true), id: '7', wikiurl: ko.observable('')}
 ];
 
 
@@ -44,14 +43,11 @@ function initMap() {
 	ko.applyBindings(new ViewModel());
 }
 
-var imgRequests = [];
-var urlRequests = [];
-
 // KO viewModel
 // Adds to the map markers and infowindows and attaches these info windows to markers
 var ViewModel = function () {
     places = ko.observableArray(locations);
-    this.searchTerm = ko.observable("");//this is the searchTerm
+    this.searchTerm = ko.observable('');//this is the searchTerm
     
     var marker, infowindow;
 	
@@ -59,7 +55,7 @@ var ViewModel = function () {
 	// this function is part of the contol(modelview) as it fetches info from wikipedia and updates the // model (locations) with it.
 	// it also sets the infoWindows for Google Maps
 	function getData() {
-		var temp, namewithunderscore, surl;
+		var namewithunderscore, surl;
 		
 		locations.forEach(function (element) {
 			//this one is used to return the list of wiki image names for each location
@@ -68,10 +64,10 @@ var ViewModel = function () {
 			surl = 'https://en.wikipedia.org/w/api.php?action=' +
 				'parse&format=json&prop=images&section=0&page=' + namewithunderscore +
 				'&callback=?';
-			var request = $.ajax({
+			$.ajax({
 				url: surl,
-				contentType: "application/json; charset=utf-8",
-				dataType: "jsonp",
+				contentType: 'application/json; charset=utf-8',
+				dataType: 'jsonp',
 				success: function (data, b, c) {
 					if (data.error) {
 						element.imagename = 'PROBLEM_IMAGE';
@@ -90,12 +86,12 @@ var ViewModel = function () {
 				}
 			}).then( function(imagename) {
 				return $.ajax({
-					contentType: "application/json; charset=utf-8",
-					dataType: "jsonp",
+					contentType: 'application/json; charset=utf-8',
+					dataType: 'jsonp',
 					url: 'https://en.wikipedia.org/w/api.php?action=' + 'query&titles=Image:' + imagename + '&format=json&prop=imageinfo&iiprop=url' + '&callback=something'
 				}).then(function(data) {
-					if (data.query.pages["-1"].imageinfo) {
-						element.imageurl = data.query.pages["-1"].imageinfo["0"].url;
+					if (data.query.pages['-1'].imageinfo) {
+						element.imageurl = data.query.pages['-1'].imageinfo['0'].url;
 					} else {
 						element.imageurl = PROBLEM_IMAGE;
 					}
@@ -117,7 +113,7 @@ var ViewModel = function () {
 		
 		 infowindow = new google.maps.InfoWindow({
 						  content: '<div>' + 'name goes here' + '</div>' + 
-						  "<div><img src='" + 'image url will go here' + "'style='width:100px' alt='wiki image'></div>",
+						  '<div><img src="' + 'image url will go here' + '" style="width:100px" alt="wiki image"></div>',
 						  maxWidth: '200'
 					   });
 		
@@ -131,13 +127,13 @@ var ViewModel = function () {
 			markers.push(marker);
 			marker.addListener('click', infoShow(marker,i));
 		} //end creating markers
-	}// end function setMarkers()
+	};// end function setMarkers()
 	
 	// this is the click function for the markers - it basically sets the infowindow and opens it
 	var infoShow = function (markercopy, icopy ) {
                             return function () {
                                 var tempcont = '<div>' + locations[icopy].name + '</div>' + 
-									"<div><img src='" + locations[icopy].imageurl + "'style='width:100px' alt='wiki image'></div>"
+									'<div><img src="' + locations[icopy].imageurl + '" style="width:100px" alt="wiki image"></div>';
 								infowindow.setContent(tempcont);
 								infowindow.open(map, markercopy);
                                 markercopy.setAnimation(google.maps.Animation.BOUNCE);
@@ -162,8 +158,8 @@ var ViewModel = function () {
     this.locationClicked = function () {
         var tempmarker = markers[parseInt($(this).attr('id'))];
 		infoShow(tempmarker,parseInt($(this).attr('id')))();	
-		$(this).parent().find("div").css("background-color", "white");
-        $(this).css("background-color", "orange");
+		$(this).parent().find('div').css('background-color', 'white');
+        $(this).css('background-color', 'orange');
     };
     
     // this function is run for filtering the list
