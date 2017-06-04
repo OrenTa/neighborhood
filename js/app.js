@@ -95,7 +95,6 @@ var ViewModel = function () {
 				}).then(function(data) {
 					if (data.query.pages["-1"].imageinfo) {
 						element.imageurl = data.query.pages["-1"].imageinfo["0"].url;
-						console.log("just set image url:" + element.imageurl);
 					} else {
 						element.imageurl = PROBLEM_IMAGE;
 					}
@@ -129,38 +128,6 @@ var ViewModel = function () {
 		}); // end of forEach
 	} // end of function getData
 		
-	// adds markers and infowindows based on the data in the model
-    //adding a timeout to wait for wikiurl loads to finish
-	function setinfos() {
-		for (i = 0; i < places().length; i++) {
-			marker = new google.maps.Marker({
-				position: places()[i].loc,
-				map: map,
-				title: places()[i].name
-			});
-            //console.log(imageurls[i]);
-			infowindow = new google.maps.InfoWindow({
-				content: '<div>' + places()[i].name + '</div>' +
-                    "<div><img src='" + locations[i].imageurl + "'style='width:100px' alt='wiki image'></div>",
-                maxWidth: '200'
-			});
-            markers.push(marker);
-            infowindows.push(infowindow);
-        
-            var infoShow = function (markercopy, infocopy) {
-                    return function () {
-                        infocopy.open(map, markercopy);
-                        markercopy.setAnimation(google.maps.Animation.BOUNCE);
-                        setTimeout(function () {
-                            markercopy.setAnimation(null);
-                        }, 1200);
-                    };
-                };
-            
-            marker.addListener('click', infoShow(marker, infowindow));
-        }
-    }
-	
 	getData();
 	           
     // this function updates the visible markers on the map
