@@ -27,7 +27,9 @@ var locations = [
     {name: "Wat Bowonniwet Vihara", loc: {lat: 13.75445, lng: 100.505351},
         show: ko.observable(true), id: "5", wikiurl: ko.observable('')},
     {name: "Wat saket", loc: {lat: 13.760294, lng: 100.499861},
-        show: ko.observable(true), id: "6", wikiurl: ko.observable('')}
+        show: ko.observable(true), id: "6", wikiurl: ko.observable('')},
+	{name: "Thammasat University", loc: {lat: 13.759400, lng: 100.491093},
+        show: ko.observable(true), id: "7", wikiurl: ko.observable('')}
 ];
 
 
@@ -54,71 +56,82 @@ var ViewModel = function () {
 	
 	// Fetches img url from wikipedia based on the locations[].name parameter
 	// this function is part of the contol(modelview) as it fetches info from wikipedia and updates the // model (locations) with it.
-	function getWikiNames() {
+	// it also sets the infoWindows for Google Maps
+	function getData() {
 		var temp, namewithunderscore, surl;
 		
-		console.log('(f) (f) (f) starting getWiki Names function ');
 		locations.forEach(function (element) {
 			//this one is used to return the list of wiki image names for each location
 			element.imagename = '';
 			namewithunderscore = element.name.split(' ').join('_');
-			console.log('*** AJAX fired asking for image name');
 			surl = 'https://en.wikipedia.org/w/api.php?action=' +
 				'parse&format=json&prop=images&section=0&page=' + namewithunderscore +
 				'&callback=?';
 			var request = $.ajax({
-				type: "GET",
 				url: surl,
 				contentType: "application/json; charset=utf-8",
-				async: true,
 				dataType: "jsonp",
 				success: function (data, b, c) {
 					if (data.error) {
 						element.imagename = 'PROBLEM_IMAGE';
 					} else {
 						element.imagename = data.parse.images[0];
-						console.log('just set one of the imagenames ' + data.parse.images[0]);
+						//console.log('just set one of the imagenames ' + data.parse.images[0]);
 					}
 				}
-			});//end of Ajax
-			imgRequests.push(request);
-		});
-	}//end function getiwkienames
-	
-	function getWikiUrls() {
-		var surlz;
-		console.log('(f) (f) (f) getWikiUrls starting ...');
-		locations.forEach(function (element) {
-			console.log('*** AJAX fired asking for image url ');
-			element.imageurl = '';
-			surlz = 'https://en.wikipedia.org/w/api.php?action=' +
-				'query&titles=Image:' + element.imagname +
-				'&format=json&prop=imageinfo&iiprop=url' +
-				'&callback=something';
-			urlRequests.push($.ajax({
-				type: "GET",
-				url: surlz,
-				contentType: "application/json; charset=utf-8",
-				async: true,
-				dataType: "jsonp",
-				success: function (dataz) {
-					if (dataz.query.pages["-1"].imageinfo) {
-						element.imageurl = dataz.query.pages["-1"].imageinfo["0"].url;
+			}).then( function(data) {
+				if (data.error) {
+					element.imagename = 'PROBLEM_IMAGE';
+				} else {
+					element.imagename = data.parse.images[0];
+					console.log('the image name is:' + element.imagename);
+					return element.imagename;
+				}
+			}).then( function(imagename) {
+				return $.ajax({
+					contentType: "application/json; charset=utf-8",
+					dataType: "jsonp",
+					url: 'https://en.wikipedia.org/w/api.php?action=' + 'query&titles=Image:' + imagename + '&format=json&prop=imageinfo&iiprop=url' + '&callback=something'
+				}).then(function(data) {
+					if (data.query.pages["-1"].imageinfo) {
+						element.imageurl = data.query.pages["-1"].imageinfo["0"].url;
+						console.log("just set image url:" + element.imageurl);
 					} else {
 						element.imageurl = PROBLEM_IMAGE;
 					}
-				},
-				error: function (errorMessagez) {
-					element.imageurl = PROBLEM_IMAGE;
-				}
-			}));
-		});
-	}
-	
+					marker = new google.maps.Marker({
+						position: element.loc,
+						map: map,
+						title: element.name
+					});
+					infowindow = new google.maps.InfoWindow({
+						content: '<div>' + element.name + '</div>' + 
+						"<div><img src='" + element.imageurl + "'style='width:100px' alt='wiki image'></div>",
+						maxWidth: '200'
+					});
+					markers.push(marker);
+					infowindows.push(infowindow);
+					
+					var infoShow = function (markercopy, infocopy) {
+						return function () {
+							infocopy.open(map, markercopy);
+							markercopy.setAnimation(google.maps.Animation.BOUNCE);
+							setTimeout(function () {
+								markercopy.setAnimation(null);
+							}, 1200);
+						};
+					};
+					
+					marker.addListener('click', infoShow(marker, infowindow));
+					
+				}); // end of last then
+			});
+		}); // end of forEach
+	} // end of function getData
+		
 	// adds markers and infowindows based on the data in the model
     //adding a timeout to wait for wikiurl loads to finish
 	function setinfos() {
-		console.log('(f) (f) (f) setinfos starting');
 		for (i = 0; i < places().length; i++) {
 			marker = new google.maps.Marker({
 				position: places()[i].loc,
@@ -148,10 +161,8 @@ var ViewModel = function () {
         }
     }
 	
-	getWikiNames();
-	$.when.apply($, imgRequests).done(getWikiUrls());
-	$.when.apply($, urlRequests).then(setinfos());
-           
+	getData();
+	           
     // this function updates the visible markers on the map
     // according to the show parameter in the array (true/false)
     function updateMap() {
