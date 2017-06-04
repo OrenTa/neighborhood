@@ -75,6 +75,9 @@ var ViewModel = function () {
 						element.imagename = data.parse.images[0];
 						//console.log('just set one of the imagenames ' + data.parse.images[0]);
 					}
+				},
+				error: function (err) {
+					window.alert('There seem to be a problem with getting info from Wikipedia API ... Do try again');
 				}
 			}).then( function(data) {
 				if (data.error) {
