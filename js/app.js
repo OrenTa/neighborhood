@@ -144,7 +144,7 @@ var ViewModel = function () {
 			markercopy.setAnimation(google.maps.Animation.BOUNCE);
 			setTimeout(function () {
 				markercopy.setAnimation(null);
-			}, 1200);
+			}, 1400);
 		};
 	};
 	
